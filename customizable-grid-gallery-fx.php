@@ -3,7 +3,7 @@
 Plugin Name: Customizable Grid Gallery FX
 Plugin URI: http://www.flashxml.net/customizable-grid-gallery.html
 Description: An original "Customizable Grid Gallery". Completely XML customizable, without using Flash. And it's free!
-Version: 0.2.1
+Version: 0.2.2
 Author: FlashXML.net
 Author URI: http://www.flashxml.net/
 License: GPL2
@@ -11,8 +11,8 @@ License: GPL2
 
 /* start client side functions */
 	function customizablegridgalleryfx_get_embed_code($customizablegridgalleryfx_attributes) {
-		$width = (int)$dockgalleryfx_attributes[1];
-		$height = (int)$dockgalleryfx_attributes[2];
+		$width = (int)$customizablegridgalleryfx_attributes[1];
+		$height = (int)$customizablegridgalleryfx_attributes[2];
 
 		if ($width == 0 || $height == 0) {
 			return '';
