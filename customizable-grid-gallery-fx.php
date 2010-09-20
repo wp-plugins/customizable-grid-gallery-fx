@@ -29,7 +29,7 @@ License: GPL2
 			'height' => $height,
 			'text' => trim($customizablegridgalleryfx_attributes[3]),
 			'gallery_path' => WP_CONTENT_URL . "/{$plugin_dir}/",
-			'swf_name' => 'CustomizableGridGallery.swf',
+			'swf_name' => 'CustomizableGridGalleryFX.swf',
 		);
 		$swf_embed['swf_path'] = $swf_embed['gallery_path'].$swf_embed['swf_name'];
 
