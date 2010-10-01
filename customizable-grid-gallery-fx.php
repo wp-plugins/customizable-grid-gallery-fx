@@ -2,7 +2,7 @@
 /*
 Plugin Name: Customizable Grid Gallery FX
 Plugin URI: http://www.flashxml.net/customizable-grid-gallery.html
-Description: An original "Customizable Grid Gallery". Completely XML customizable, without using Flash. And it's free!
+Description: An original "Customizable Grid Gallery". Completely XML customizable without any Flash knowledge. And it's free!
 Version: 0.2.4
 Author: FlashXML.net
 Author URI: http://www.flashxml.net/
@@ -15,7 +15,7 @@ License: GPL2
 		$height = (int)$customizablegridgalleryfx_attributes[2];
 
 		if ($width == 0 || $height == 0) {
-			return '';
+			return '<!-- invalid Customizable Grid Gallery FX width and / or height -->';
 		}
 
 		$plugin_dir = get_option('customizablegridgalleryfx_path');
@@ -27,16 +27,18 @@ License: GPL2
 		$swf_embed = array(
 			'width' => $width,
 			'height' => $height,
-			'text' => trim($customizablegridgalleryfx_attributes[3]),
+			'text' => isset($customizablegridgalleryfx_attributes[5]) ? trim($customizablegridgalleryfx_attributes[5]) : '',
 			'gallery_path' => WP_CONTENT_URL . "/{$plugin_dir}/",
 			'swf_name' => 'CustomizableGridGalleryFX.swf',
 		);
 		$swf_embed['swf_path'] = $swf_embed['gallery_path'].$swf_embed['swf_name'];
 
+		$settings_file_name = !empty($customizablegridgalleryfx_attributes[4]) ? $customizablegridgalleryfx_attributes[4] : 'settings.xml';
+
 		if (!is_feed()) {
 			$embed_code = '<div id="customizablegridgallery-fx">'.$swf_embed['text'].'</div>';
 			$embed_code .= '<script type="text/javascript">';
-			$embed_code .= "swfobject.embedSWF('{$swf_embed['swf_path']}', 'customizablegridgallery-fx', '{$swf_embed['width']}', '{$swf_embed['height']}', '9.0.0.0', '', { folderPath: '{$swf_embed['gallery_path']}' }, { scale: 'noscale', salign: 'tl', wmode: 'transparent', allowScriptAccess: 'sameDomain', allowFullScreen: true }, {});";
+			$embed_code .= "swfobject.embedSWF('{$swf_embed['swf_path']}', 'customizablegridgallery-fx', '{$swf_embed['width']}', '{$swf_embed['height']}', '9.0.0.0', '', { folderPath: '{$swf_embed['gallery_path']}'".($settings_file_name != 'settings.xml' ? ", settingsXML: '{$settings_file_name}', navigationSettingsXML: 'grid/{$settings_file_name}', gallerySettingsXML: 'holder/{$settings_file_name}', " : '')." }, { scale: 'noscale', salign: 'tl', wmode: 'transparent', allowScriptAccess: 'sameDomain', allowFullScreen: true }, {});";
 			$embed_code.= '</script>';
 		} else {
 			$embed_code = '<object width="'.$swf_embed['width'].'" height="'.$swf_embed['height'].'">';
@@ -47,8 +49,8 @@ License: GPL2
 			$embed_code .= '<param name="allowScriptAccess" value="sameDomain"></param>';
 			$embed_code .= '<param name="allowFullScreen" value="true"></param>';
 			$embed_code .= '<param name="sameDomain" value="true"></param>';
-			$embed_code .= '<param name="flashvars" value="folderPath='.$swf_embed['gallery_path'].'"></param>';
-			$embed_code .= '<embed type="application/x-shockwave-flash" width="'.$swf_embed['width'].'" height="'.$swf_embed['height'].'" src="'.$swf_embed['swf_path'].'" scale="noscale" salign="tl" wmode="transparent" allowScriptAccess="sameDomain" allowFullScreen="true" flashvars="folderPath='.$swf_embed['gallery_path'].'"';
+			$embed_code .= '<param name="flashvars" value="folderPath='.$swf_embed['gallery_path'].($settings_file_name != 'settings.xml' ? '&settingsXML='.$settings_file_name.'&navigationSettingsXML='.$settings_file_name.'&gallerySettingsXML='.$settings_file_name : '').'"></param>';
+			$embed_code .= '<embed type="application/x-shockwave-flash" width="'.$swf_embed['width'].'" height="'.$swf_embed['height'].'" src="'.$swf_embed['swf_path'].'" scale="noscale" salign="tl" wmode="transparent" allowScriptAccess="sameDomain" allowFullScreen="true" flashvars="folderPath='.$swf_embed['gallery_path'].($settings_file_name != 'settings.xml' ? '&settingsXML='.$settings_file_name.'&navigationSettingsXML=grid/'.$settings_file_name.'&gallerySettingsXML=holder/'.$settings_file_name : '').'"';
 			$embed_code .= '></embed>';
 			$embed_code .= '</object>';
 		}
@@ -57,11 +59,11 @@ License: GPL2
 	}
 
 	function customizablegridgalleryfx_filter_content($content) {
-		return preg_replace_callback('|\[customizable-grid-gallery-fx\s*width\s*=\s*"(\d+)"\s+height\s*=\s*"(\d+)"\s*\](.*)\[/customizable-grid-gallery-fx\]|i', 'customizablegridgalleryfx_get_embed_code', $content);
+		return preg_replace_callback('|\[customizable-grid-gallery-fx\s+width\s*=\s*"(\d+)"\s+height\s*=\s*"(\d+)"\s*(settings="([^"]+)")?\](.*)\[/customizable-grid-gallery-fx\]|i', 'customizablegridgalleryfx_get_embed_code', $content);
 	}
 
 	function customizablegridgalleryfx_echo_embed_code($width, $height, $div_text = '') {
-		echo customizablegridgalleryfx_get_embed_code(array(1 => $width, 2 => $height, 3 => $div_text));
+		echo customizablegridgalleryfx_get_embed_code(array(1 => $width, 2 => $height, 5 => $div_text));
 	}
 
 	function customizablegridgalleryfx_load_swfobject_lib() {

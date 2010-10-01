@@ -7,7 +7,7 @@ Stable tag: trunk
 
 == Description ==
 
-An original "Customizable Grid Gallery". Completely XML customizable, without using Flash. And it's free!
+An original "Customizable Grid Gallery". Completely XML customizable without any Flash knowledge. And it's free!
 
 = Main features =
 
