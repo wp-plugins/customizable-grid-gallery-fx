@@ -9,8 +9,17 @@ Author URI: http://www.flashxml.net/
 License: GPL2
 */
 
+/* start global parameters */
+	$customizablegridgalleryfx_params = array(
+		'count'	=> 0, // number of Customizable Grid Gallery FX embeds
+	);
+/* end global parameters */
+
 /* start client side functions */
 	function customizablegridgalleryfx_get_embed_code($customizablegridgalleryfx_attributes) {
+		global $customizablegridgalleryfx_params;
+		$customizablegridgalleryfx_params['count']++;
+
 		$width = (int)$customizablegridgalleryfx_attributes[1];
 		$height = (int)$customizablegridgalleryfx_attributes[2];
 
@@ -36,9 +45,9 @@ License: GPL2
 		$settings_file_name = !empty($customizablegridgalleryfx_attributes[4]) ? $customizablegridgalleryfx_attributes[4] : 'settings.xml';
 
 		if (!is_feed()) {
-			$embed_code = '<div id="customizablegridgallery-fx">'.$swf_embed['text'].'</div>';
+			$embed_code = '<div id="customizablegridgallery-fx'.$customizablegridgalleryfx_params['count'].'">'.$swf_embed['text'].'</div>';
 			$embed_code .= '<script type="text/javascript">';
-			$embed_code .= "swfobject.embedSWF('{$swf_embed['swf_path']}', 'customizablegridgallery-fx', '{$swf_embed['width']}', '{$swf_embed['height']}', '9.0.0.0', '', { folderPath: '{$swf_embed['gallery_path']}'".($settings_file_name != 'settings.xml' ? ", settingsXML: '{$settings_file_name}', navigationSettingsXML: 'grid/{$settings_file_name}', gallerySettingsXML: 'holder/{$settings_file_name}', " : '')." }, { scale: 'noscale', salign: 'tl', wmode: 'transparent', allowScriptAccess: 'sameDomain', allowFullScreen: true }, {});";
+			$embed_code .= "swfobject.embedSWF('{$swf_embed['swf_path']}', 'customizablegridgallery-fx{$customizablegridgalleryfx_params['count']}', '{$swf_embed['width']}', '{$swf_embed['height']}', '9.0.0.0', '', { folderPath: '{$swf_embed['gallery_path']}'".($settings_file_name != 'settings.xml' ? ", settingsXML: '{$settings_file_name}', navigationSettingsXML: 'grid/{$settings_file_name}', gallerySettingsXML: 'holder/{$settings_file_name}', " : '')." }, { scale: 'noscale', salign: 'tl', wmode: 'transparent', allowScriptAccess: 'sameDomain', allowFullScreen: true }, {});";
 			$embed_code.= '</script>';
 		} else {
 			$embed_code = '<object width="'.$swf_embed['width'].'" height="'.$swf_embed['height'].'">';
@@ -62,8 +71,8 @@ License: GPL2
 		return preg_replace_callback('|\[customizable-grid-gallery-fx\s+width\s*=\s*"(\d+)"\s+height\s*=\s*"(\d+)"\s*(settings="([^"]+)")?\](.*)\[/customizable-grid-gallery-fx\]|i', 'customizablegridgalleryfx_get_embed_code', $content);
 	}
 
-	function customizablegridgalleryfx_echo_embed_code($width, $height, $div_text = '') {
-		echo customizablegridgalleryfx_get_embed_code(array(1 => $width, 2 => $height, 5 => $div_text));
+	function customizablegridgalleryfx_echo_embed_code($width, $height, $div_text = '', $settings_xml = '') {
+		echo customizablegridgalleryfx_get_embed_code(array(1 => $width, 2 => $height, 4 => $settings_xml, 5 => $div_text));
 	}
 
 	function customizablegridgalleryfx_load_swfobject_lib() {
